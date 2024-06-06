@@ -73,7 +73,6 @@ class ControllerSingle:
     async def loop_for_recv_peft(self):
         while True:
             recv_peft = await self.recv_from_peft_server.recv_pyobj()
-            print(recv_peft)
             self.recv_peft.append(recv_peft)
 
 

@@ -5,6 +5,7 @@ import dataclasses
 import json
 import logging
 import multiprocessing as mp
+mp.set_start_method('spawn',force=True)
 import os
 import sys
 import threading
@@ -24,7 +25,7 @@ import uvicorn
 import uvloop
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response, StreamingResponse
-
+from sglang.srt.managers.controller.peft_manager import PeftConfig,PeftTask
 from sglang.backend.runtime_endpoint import RuntimeEndpoint
 from sglang.srt.constrained import disable_cache
 from sglang.srt.hf_transformers_utils import get_tokenizer
