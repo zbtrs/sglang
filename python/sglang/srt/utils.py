@@ -159,7 +159,7 @@ def allocate_init_ports(
     cur_port = ret_ports[-1] + 1 if len(ret_ports) > 0 else 10000
 
     # HTTP + Tokenizer + Controller + Detokenizer + dp_size * (nccl + tp_size)
-    num_ports_needed = 4 + dp_size * (1 + tp_size)
+    num_ports_needed = 5 + dp_size * (1 + tp_size)
     while len(ret_ports) < num_ports_needed:
         if cur_port not in ret_ports and is_port_available(cur_port):
             ret_ports.append(cur_port)

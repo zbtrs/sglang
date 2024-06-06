@@ -155,14 +155,15 @@ def launch_server(server_args: ServerArgs, pipe_finish_writer, model_overide_arg
     for i in range(server_args.dp_size):
         model_port_args.append(
             ModelPortArgs(
-                nccl_port=ports[3 + i * (tp + 1)],
-                model_tp_ports=ports[3 + i * (tp + 1) + 1 : 3 + (i + 1) * (tp + 1)],
+                nccl_port=ports[4 + i * (tp + 1)],
+                model_tp_ports=ports[4 + i * (tp + 1) + 1 : 3 + (i + 1) * (tp + 1)],
             )
-        )
+        )        
     port_args = PortArgs(
         tokenizer_port=ports[0],
         router_port=ports[1],
         detokenizer_port=ports[2],
+        peft_port=ports[3],
         model_port_args=model_port_args,
     )
 
