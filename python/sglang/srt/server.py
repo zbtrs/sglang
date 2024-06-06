@@ -32,7 +32,6 @@ from sglang.srt.managers.detokenizer_manager import start_detokenizer_process
 from sglang.srt.managers.io_struct import GenerateReqInput
 from sglang.srt.managers.controller.manager_single import start_controller_process as start_controller_process_single
 from sglang.srt.managers.controller.manager_multi import start_controller_process as start_controller_process_multi
-from sglang.srt.managers.controller.peft_manager import PeftConfig, PeftManager,PeftTask
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
 from sglang.srt.openai_api_adapter import (
     load_chat_template_for_openai_api,
@@ -59,8 +58,6 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 app = FastAPI()
 tokenizer_manager = None
-send_to_peft_router = None
-recv_from_peft_router = None
 
 
 @app.get("/health")
@@ -231,16 +228,6 @@ def launch_server(server_args: ServerArgs, pipe_finish_writer, model_overide_arg
         )
         sys.exit(1)
     assert proc_router.is_alive() and proc_detoken.is_alive()
-    
-    # global recv_from_peft_router,send_to_peft_router
-    # context = zmq.asyncio.Context(2)
-    # recv_from_peft_router = context.socket(zmq.PULL)
-    # recv_from_peft_router.bind(f"tcp://127.0.0.1:{port_args.server_peft_port}")
-    
-    # send_to_peft_router = context.socket(zmq.PUSH)
-    # send_to_peft_router.connect(
-    #     f"tcp://127.0.0.1:{port_args.router_peft_port}"
-    # )
 
     if server_args.api_key and server_args.api_key != "":
         app.add_middleware(APIKeyValidatorMiddleware, api_key=server_args.api_key)
