@@ -27,7 +27,7 @@ class PeftConfig:
         )
 
 class PeftTask:
-    def __init__(self, peft_config, preprocess_function, prepare_data_function, setup_optimizer_function, text_column, label_column, max_length, lr, batch_size, num_epochs):
+    def __init__(self, peft_config, text_column, label_column, max_length, lr, batch_size, num_epochs, train_dataset,eval_dataset,dataset,optimizer,lr_scheduler):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.text_column = text_column
         self.label_column = label_column
@@ -47,24 +47,29 @@ class PeftTask:
         self.current_step = 0
         self.iterator_position = 0
 
-        self.train_dataset = None
-        self.eval_dataset = None
+        self.train_dataset = train_dataset
+        self.eval_dataset = eval_dataset
         self.train_dataloader = None
         self.eval_dataloader = None
         self.train_iterator = None
-        self.dataset = None
-        self.optimizer = None
-        self.lr_scheduler = None
+        self.dataset = dataset
+        self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
 
-        self.preprocess_function = preprocess_function
-        self.prepare_data_function = prepare_data_function
-        self.setup_optimizer_function = setup_optimizer_function
+    # def prepare_data(self):
+    #     self.train_dataset, self.eval_dataset, self.train_dataloader, self.eval_dataloader, self.train_iterator, self.dataset = self.prepare_data_function(self)
 
-    def prepare_data(self):
-        self.train_dataset, self.eval_dataset, self.train_dataloader, self.eval_dataloader, self.train_iterator, self.dataset = self.prepare_data_function(self)
+    # def setup_optimizer_and_scheduler(self):
+    #     self.optimizer, self.lr_scheduler = self.setup_optimizer_function(self)
 
-    def setup_optimizer_and_scheduler(self):
-        self.optimizer, self.lr_scheduler = self.setup_optimizer_function(self)
+    def post_init(self):
+        self.train_dataloader = DataLoader(
+            self.train_dataset,shuffle=True, collate_fn=default_data_collator, batch_size=self.batch_size, pin_memory=True
+        )
+        self.eval_dataloader = DataLoader(
+            self.eval_dataset, collate_fn=default_data_collator, batch_size=self.batch_size, pin_memory=True
+        )
+        self.train_iterator = iter(self.train_dataloader)
 
     def save_state(self):
         state = {
