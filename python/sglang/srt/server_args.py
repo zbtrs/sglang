@@ -308,5 +308,6 @@ class PortArgs:
     tokenizer_port: int
     router_port: int
     detokenizer_port: int
-    peft_port: int
+    router_peft_port: int
+    server_peft_port: int
     model_port_args: List[ModelPortArgs]

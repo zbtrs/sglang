@@ -25,6 +25,14 @@ class ControllerSingle:
         self.send_to_detokenizer.connect(
             f"tcp://127.0.0.1:{port_args.detokenizer_port}"
         )
+        
+        # self.send_to_peft_server = context.socket(zmq.PUSH)
+        # self.send_to_peft_server.connect(f"tcp://127.0.0.1:{port_args.server_peft_port}")
+        
+        # self.recv_from_peft_server = context.socket(zmq.PULL)
+        # self.recv_from_peft_server.bind(
+        #     f"tcp://127.0.0.1:{port_args.router_peft_port}"
+        # )
 
         # Init status
         self.model_client = model_client
