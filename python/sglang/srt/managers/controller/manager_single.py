@@ -17,7 +17,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 class ControllerSingle:
     def __init__(self, model_client: ModelTpClient, port_args: PortArgs):
         # Init communication
-        context = zmq.asyncio.Context(2)
+        context = zmq.asyncio.Context(4)
         self.recv_from_tokenizer = context.socket(zmq.PULL)
         self.recv_from_tokenizer.bind(f"tcp://127.0.0.1:{port_args.router_port}")
 
@@ -26,13 +26,15 @@ class ControllerSingle:
             f"tcp://127.0.0.1:{port_args.detokenizer_port}"
         )
         
-        # self.send_to_peft_server = context.socket(zmq.PUSH)
-        # self.send_to_peft_server.connect(f"tcp://127.0.0.1:{port_args.server_peft_port}")
+        self.send_to_peft_server = context.socket(zmq.PUSH)
+        self.send_to_peft_server.connect(
+            f"tcp://127.0.0.1:{port_args.peft_server_port}"
+        )
         
-        # self.recv_from_peft_server = context.socket(zmq.PULL)
-        # self.recv_from_peft_server.bind(
-        #     f"tcp://127.0.0.1:{port_args.router_peft_port}"
-        # )
+        self.recv_from_peft_server = context.socket(zmq.PULL)
+        self.recv_from_peft_server.bind(
+            f"tcp://127.0.0.1:{port_args.peft_router_port}"
+        )
 
         # Init status
         self.model_client = model_client

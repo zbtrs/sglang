@@ -12,6 +12,8 @@ import time
 from http import HTTPStatus
 from typing import Optional
 
+import zmq.asyncio
+
 # Fix a bug of Python threading
 setattr(threading, "_register_atexit", lambda *args, **kwargs: None)
 
@@ -47,7 +49,10 @@ from sglang.srt.utils import (
 )
 from sglang.utils import get_exception_traceback
 import zmq
-import zmq.asyncio
+
+context = zmq.asyncio.Context(2)
+send_to_peft_router = None
+recv_from_peft_router = None
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -168,8 +173,8 @@ def launch_server(server_args: ServerArgs, pipe_finish_writer, model_overide_arg
         tokenizer_port=ports[0],
         router_port=ports[1],
         detokenizer_port=ports[2],
-        router_peft_port=ports[3],
-        server_peft_port=ports[4],
+        peft_router_port=ports[3],
+        peft_server_port=ports[4],
         model_port_args=model_port_args,
     )
     print(port_args)
@@ -201,6 +206,18 @@ def launch_server(server_args: ServerArgs, pipe_finish_writer, model_overide_arg
     # Wait for the model to finish loading
     router_init_state = pipe_router_reader.recv()
     detoken_init_state = pipe_detoken_reader.recv()
+    
+    global send_to_peft_router,recv_from_peft_router,context
+    send_to_peft_router = context.socket(zmq.PUSH)
+    send_to_peft_router.connect(
+        f"tcp://127.0.0.1:{port_args.peft_router_port}"
+    )
+    
+    recv_from_peft_router = context.socket(zmq.PULL)
+    recv_from_peft_router.bind(
+        f"tcp://127.0.0.1:{port_args.peft_server_port}"
+    )
+    
 
     if router_init_state != "init ok" or detoken_init_state != "init ok":
         proc_router.kill()
