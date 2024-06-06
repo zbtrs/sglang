@@ -39,6 +39,7 @@ class ControllerSingle:
         # Init status
         self.model_client = model_client
         self.recv_reqs = []
+        self.recv_peft = []
 
         # Init some configs
         self.request_dependency_delay = global_config.request_dependency_delay
@@ -68,6 +69,12 @@ class ControllerSingle:
         while True:
             recv_req = await self.recv_from_tokenizer.recv_pyobj()
             self.recv_reqs.append(recv_req)
+    
+    async def loop_for_recv_peft(self):
+        while True:
+            recv_peft = await self.recv_from_peft_server.recv_pyobj()
+            print(recv_peft)
+            self.recv_peft.append(recv_peft)
 
 
 def start_controller_process(
@@ -95,4 +102,5 @@ def start_controller_process(
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.create_task(controller.loop_for_recv_requests())
+    loop.create_task(controller.loop_for_recv_peft())
     loop.run_until_complete(controller.loop_for_forward())
