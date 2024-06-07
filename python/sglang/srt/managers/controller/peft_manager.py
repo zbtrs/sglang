@@ -6,6 +6,7 @@ from transformers import default_data_collator
 from datasets import load_dataset
 from tqdm import tqdm
 import itertools
+import dill as pickle
 
 class PeftConfig:
     def __init__(self, model_name_or_path, peft_type, task_type, inference_mode, r, lora_alpha, lora_dropout):
@@ -16,6 +17,29 @@ class PeftConfig:
         self.r = r
         self.lora_alpha = lora_alpha
         self.lora_dropout = lora_dropout
+
+    # def to_dict(self):
+    #     return {
+    #         "model_name_or_path": self.model_name_or_path,
+    #         "peft_type": self.peft_type,
+    #         "task_type": self.task_type,
+    #         "inference_mode": self.inference_mode,
+    #         "r": self.r,
+    #         "lora_alpha": self.lora_alpha,
+    #         "lora_dropout": self.lora_dropout
+    #     }
+
+    # @staticmethod
+    # def from_dict(data):
+    #     return PeftConfig(
+    #         model_name_or_path=data["model_name_or_path"],
+    #         peft_type=data["peft_type"],
+    #         task_type=data["task_type"],
+    #         inference_mode=data["inference_mode"],
+    #         r=data["r"],
+    #         lora_alpha=data["lora_alpha"],
+    #         lora_dropout=data["lora_dropout"]
+    #     )
 
     def get_config(self):
         return LoraConfig(
@@ -55,6 +79,43 @@ class PeftTask:
         self.dataset = dataset
         self.optimizer = None
         self.lr_scheduler = None
+        
+    def serialize(self):
+        return pickle.dumps(self)
+
+    @staticmethod
+    def deserialize(serialized_obj):
+        return pickle.loads(serialized_obj)
+    
+    # def to_dict(self):
+    #     return {
+    #         "peft_config": self.peft_config.to_dict(),
+    #         "text_column": self.text_column,
+    #         "label_column": self.label_column,
+    #         "max_length": self.max_length,
+    #         "lr": self.lr,
+    #         "batch_size": self.batch_size,
+    #         "num_epochs": self.num_epochs,
+    #         "train_dataset": self.train_dataset,
+    #         "eval_dataset": self.eval_dataset,
+    #         "dataset": self.dataset
+    #     }
+
+    # @staticmethod
+    # def from_dict(data):
+    #     peft_config = PeftConfig.from_dict(data["peft_config"])
+    #     return PeftTask(
+    #         peft_config=peft_config,
+    #         text_column=data["text_column"],
+    #         label_column=data["label_column"],
+    #         max_length=data["max_length"],
+    #         lr=data["lr"],
+    #         batch_size=data["batch_size"],
+    #         num_epochs=data["num_epochs"],
+    #         train_dataset=data["train_dataset"],
+    #         eval_dataset=data["eval_dataset"],
+    #         dataset=data["dataset"]
+    #     )
 
     # def prepare_data(self):
     #     self.train_dataset, self.eval_dataset, self.train_dataloader, self.eval_dataloader, self.train_iterator, self.dataset = self.prepare_data_function(self)

@@ -158,6 +158,7 @@ class TokenizerManager:
                 top_logprobs_num=obj.top_logprobs_num,
                 stream=obj.stream,
             )
+            print("tokenizer ready to send")
             self.send_to_router.send_pyobj(tokenized_obj)
 
             event = asyncio.Event()
