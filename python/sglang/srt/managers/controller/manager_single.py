@@ -8,8 +8,10 @@ import zmq.asyncio
 
 from sglang.global_config import global_config
 from sglang.srt.managers.controller.tp_worker import ModelTpClient
+from sglang.srt.managers.controller.peft_manager import PeftConfig,PeftManager,PeftTask
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.utils import get_exception_traceback
+
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -38,6 +40,7 @@ class ControllerSingle:
 
         # Init status
         self.model_client = model_client
+        self.peft_manager = PeftManager()
         self.recv_reqs = []
         self.recv_peft = []
 
@@ -48,22 +51,32 @@ class ControllerSingle:
         while True:
             next_step_input = list(self.recv_reqs)
             self.recv_reqs = []
-            out_pyobjs = await self.model_client.step(next_step_input)
 
-            for obj in out_pyobjs:
-                self.send_to_detokenizer.send_pyobj(obj)
+            if next_step_input:
+                await self.process_step(next_step_input)
+            elif self.peft_manager.task_queue:
+                await self.peft_manager.run_next_step()
+            else:
+                await self.process_step(next_step_input)
 
-            # async sleep for receiving the subsequent request and avoiding cache miss
-            slept = False
-            if len(out_pyobjs) != 0:
-                has_finished = any([obj.finished for obj in out_pyobjs])
-                if has_finished:
-                    if self.request_dependency_delay > 0:
-                        slept = True
-                        await asyncio.sleep(self.request_dependency_delay)
+    async def process_step(self, next_step_input):
+        out_pyobjs = await self.model_client.step(next_step_input)
 
-            if not slept:
-                await asyncio.sleep(global_config.wait_for_new_request_delay)
+        for obj in out_pyobjs:
+            self.send_to_detokenizer.send_pyobj(obj)
+
+        # async sleep for receiving the subsequent request and avoiding cache miss
+        slept = False
+        if len(out_pyobjs) != 0:
+            has_finished = any([obj.finished for obj in out_pyobjs])
+            if has_finished:
+                if self.request_dependency_delay > 0:
+                    slept = True
+                    await asyncio.sleep(self.request_dependency_delay)
+
+        if not slept:
+            await asyncio.sleep(global_config.wait_for_new_request_delay)
+
 
     async def loop_for_recv_requests(self):
         while True:
@@ -73,7 +86,13 @@ class ControllerSingle:
     async def loop_for_recv_peft(self):
         while True:
             recv_peft = await self.recv_from_peft_server.recv_pyobj()
-            self.recv_peft.append(recv_peft)
+            recv_peft.post_init()
+            task_state = {
+                "task": recv_peft,
+                "state": None
+            }
+            self.peft_manager.add_task(task_state)
+
 
 
 def start_controller_process(

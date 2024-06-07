@@ -27,7 +27,7 @@ class PeftConfig:
         )
 
 class PeftTask:
-    def __init__(self, peft_config, text_column, label_column, max_length, lr, batch_size, num_epochs, train_dataset,eval_dataset,dataset,optimizer,lr_scheduler):
+    def __init__(self, peft_config, text_column, label_column, max_length, lr, batch_size, num_epochs, train_dataset,eval_dataset,dataset):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.text_column = text_column
         self.label_column = label_column
@@ -53,8 +53,8 @@ class PeftTask:
         self.eval_dataloader = None
         self.train_iterator = None
         self.dataset = dataset
-        self.optimizer = optimizer
-        self.lr_scheduler = lr_scheduler
+        self.optimizer = None
+        self.lr_scheduler = None
 
     # def prepare_data(self):
     #     self.train_dataset, self.eval_dataset, self.train_dataloader, self.eval_dataloader, self.train_iterator, self.dataset = self.prepare_data_function(self)
@@ -70,6 +70,13 @@ class PeftTask:
             self.eval_dataset, collate_fn=default_data_collator, batch_size=self.batch_size, pin_memory=True
         )
         self.train_iterator = iter(self.train_dataloader)
+        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.lr)
+        self.lr_scheduler = get_linear_schedule_with_warmup(
+            optimizer=self.optimizer,
+            num_warmup_steps=0,
+            num_training_steps=(len(self.train_dataloader) * self.num_epochs),
+        )
+
 
     def save_state(self):
         state = {
@@ -162,19 +169,24 @@ class PeftManager:
         self.task_queue.append(peft_task)
         print(f"Task added. Queue length: {len(self.task_queue)}")
 
-    def run_next_step(self):
-        while self.task_queue:
+    async def run_next_step(self):
+        if self.task_queue:
             task_state = self.task_queue.pop(0)
             task = task_state["task"]
             state = task_state["state"]
 
             print(f"{task.current_step}, {task.num_epochs}, {len(task.train_dataloader)}")
             
-            if task.current_step >= task.num_epochs * len(task.train_dataloader):
+            while task.current_step >= task.num_epochs * len(task.train_dataloader):
                 task.evaluate()
                 task.unload_from_gpu()
                 print(f"Task with current_step {task.current_step} exceeds total steps, skipping.")
-                continue
+                if self.task_queue:
+                    task_state = self.task_queue.pop(0)
+                    task = task_state["task"]
+                    state = task_state["state"]
+                else:
+                    return
 
             task.load_state(state)
             try:
