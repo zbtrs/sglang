@@ -158,9 +158,7 @@ class TokenizerManager:
                 top_logprobs_num=obj.top_logprobs_num,
                 stream=obj.stream,
             )
-            print("tokenizer ready to send")
             self.send_to_router.send_pyobj(tokenized_obj)
-
             event = asyncio.Event()
             state = ReqState([], False, event)
             self.rid_to_state[rid] = state
@@ -300,7 +298,7 @@ class TokenizerManager:
     async def handle_loop(self):
         while True:
             recv_obj = await self.recv_from_detokenizer.recv_pyobj()
-
+            
             if isinstance(recv_obj, BatchStrOut):
                 for i, rid in enumerate(recv_obj.rids):
                     state = self.rid_to_state.get(rid, None)

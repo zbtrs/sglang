@@ -43,6 +43,7 @@ class ControllerSingle:
         self.peft_manager = PeftManager()
         self.recv_reqs = []
         self.recv_peft = []
+        self.running_request = 0
 
         # Init some configs
         self.request_dependency_delay = global_config.request_dependency_delay
@@ -50,22 +51,20 @@ class ControllerSingle:
     async def loop_for_forward(self):
         while True:
             next_step_input = list(self.recv_reqs)
-            print(f"loop recv_reqs: {self.recv_reqs}")
             self.recv_reqs = []
-            print(next_step_input)
             if next_step_input:
                 await self.process_step(next_step_input)
-            elif self.peft_manager.task_queue:
+            elif self.peft_manager.task_queue and self.running_request == 0:
                 await self.peft_manager.run_next_step()
+                await asyncio.sleep(0.01) 
             else:
                 await self.process_step(next_step_input)
 
     async def process_step(self, next_step_input):
         out_pyobjs = await self.model_client.step(next_step_input)
-
         for obj in out_pyobjs:
+            self.running_request = self.running_request - 1
             self.send_to_detokenizer.send_pyobj(obj)
-
         # async sleep for receiving the subsequent request and avoiding cache miss
         slept = False
         if len(out_pyobjs) != 0:
@@ -82,7 +81,7 @@ class ControllerSingle:
     async def loop_for_recv_requests(self):
         while True:
             recv_req = await self.recv_from_tokenizer.recv_pyobj()
-            print(f"router get recv: {recv_req}")
+            self.running_request = self.running_request + 1
             self.recv_reqs.append(recv_req)
     
     async def loop_for_recv_peft(self):
