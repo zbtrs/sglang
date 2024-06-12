@@ -26,36 +26,6 @@ logger = logging.getLogger("srt.model_runner")
 # for server args in model endpoints
 global_server_args_dict = {}
 
-def calculate_total_memory(req_pool: ReqToTokenPool, kv_pool: TokenToKVPool):
-    req_to_token_mem_state_size = req_pool.size * (1 / 8)  # in bytes
-    req_to_token_data_size = req_pool.size * req_pool.max_context_len * 4  # int32 is 4 bytes
-    req_to_token_total_size = req_to_token_mem_state_size + req_to_token_data_size
-
-    token_to_kv_mem_state_size = kv_pool.size * 2  # int16 is 2 bytes
-    token_to_kv_data_size = kv_pool.layer_num * kv_pool.size * 2 * kv_pool.head_num * kv_pool.head_dim * (torch.finfo(kv_pool.dtype).bits / 8)  # dtype size in bytes
-    token_to_kv_total_size = token_to_kv_mem_state_size + token_to_kv_data_size
-
-    total_size_in_bytes = req_to_token_total_size + token_to_kv_total_size
-    total_size_in_gb = total_size_in_bytes / (1024**3)  # convert bytes to GB
-
-    return total_size_in_gb
-
-def calculate_used_memory(req_pool: ReqToTokenPool, kv_pool: TokenToKVPool):
-    req_to_token_used_size = req_pool.used_size()
-    req_to_token_mem_state_used_size = req_to_token_used_size * (1 / 8)  # in bytes
-    req_to_token_data_used_size = req_to_token_used_size * req_pool.max_context_len * 4  # int32 is 4 bytes
-    req_to_token_total_used_size = req_to_token_mem_state_used_size + req_to_token_data_used_size
-
-    kv_pool_used_size = kv_pool.used_size()
-    token_to_kv_mem_state_used_size = kv_pool_used_size * 2  # int16 is 2 bytes
-    token_to_kv_data_used_size = kv_pool.layer_num * kv_pool_used_size * 2 * kv_pool.head_num * kv_pool.head_dim * (torch.finfo(kv_pool.dtype).bits / 8)  # dtype size in bytes
-    token_to_kv_total_used_size = token_to_kv_mem_state_used_size + token_to_kv_data_used_size
-
-    total_used_size_in_bytes = req_to_token_total_used_size + token_to_kv_total_used_size
-    total_used_size_in_gb = total_used_size_in_bytes / (1024**3)  # convert bytes to GB
-
-    return total_used_size_in_gb
-
 @dataclass
 class InputMetadata:
     model_runner: "ModelRunner"
@@ -290,7 +260,37 @@ class ModelRunner:
         self.load_model()
         self.init_memory_pool(total_gpu_memory)
         self.is_multimodal_model = is_multimodal_model(self.model_config)
+        
+    def calculate_total_memory(self):
+        req_to_token_mem_state_size = self.req_to_token_pool.size * (1 / 8)  # in bytes
+        req_to_token_data_size = self.req_to_token_pool.size * self.req_to_token_pool.max_context_len * 4  # int32 is 4 bytes
+        req_to_token_total_size = req_to_token_mem_state_size + req_to_token_data_size
 
+        token_to_kv_mem_state_size = self.token_to_kv_pool.size * 2  # int16 is 2 bytes
+        token_to_kv_data_size = self.token_to_kv_pool.layer_num * self.token_to_kv_pool.size * 2 * self.token_to_kv_pool.head_num * self.token_to_kv_pool.head_dim * (torch.finfo(self.token_to_kv_pool.dtype).bits / 8)  # dtype size in bytes
+        token_to_kv_total_size = token_to_kv_mem_state_size + token_to_kv_data_size
+
+        total_size_in_bytes = req_to_token_total_size + token_to_kv_total_size
+        total_size_in_gb = total_size_in_bytes / (1024**3)  # convert bytes to GB
+
+        return total_size_in_gb
+
+    def calculate_used_memory(self):
+        req_to_token_used_size = self.req_to_token_pool.used_size()
+        req_to_token_mem_state_used_size = req_to_token_used_size * (1 / 8)  # in bytes
+        req_to_token_data_used_size = req_to_token_used_size * self.req_to_token_pool.max_context_len * 4  # int32 is 4 bytes
+        req_to_token_total_used_size = req_to_token_mem_state_used_size + req_to_token_data_used_size
+
+        kv_pool_used_size = self.token_to_kv_pool.used_size()
+        token_to_kv_mem_state_used_size = kv_pool_used_size * 2  # int16 is 2 bytes
+        token_to_kv_data_used_size = self.token_to_kv_pool.layer_num * kv_pool_used_size * 2 * self.token_to_kv_pool.head_num * self.token_to_kv_pool.head_dim * (torch.finfo(self.token_to_kv_pool.dtype).bits / 8)  # dtype size in bytes
+        token_to_kv_total_used_size = token_to_kv_mem_state_used_size + token_to_kv_data_used_size
+
+        total_used_size_in_bytes = req_to_token_total_used_size + token_to_kv_total_used_size
+        total_used_size_in_gb = total_used_size_in_bytes / (1024**3)  # convert bytes to GB
+
+        return total_used_size_in_gb
+    
     def load_model(self):
         logger.info(
             f"[gpu_id={self.gpu_id}] Load weight begin. "

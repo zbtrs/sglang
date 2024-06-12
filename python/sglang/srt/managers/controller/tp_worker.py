@@ -197,9 +197,6 @@ class ModelTpServer:
     @torch.inference_mode()
     def forward_step(self):
         new_batch = self.get_new_fill_batch()
-        global batch_size
-
-        # logger.info(f"batch_size: {batch_size}")
         if new_batch is not None:
             # Run a new fill batch
             logger.info(f"prefill batch size: {new_batch.get_len()}")
@@ -208,7 +205,7 @@ class ModelTpServer:
             prefill_end_time = time.time()
             logger.info(f"prefill time: {prefill_end_time - prefill_start_time}")
             self.cache_filled_batch(new_batch)
-
+            
             if not new_batch.is_empty():
                 if self.running_batch is None:
                     self.running_batch = new_batch
