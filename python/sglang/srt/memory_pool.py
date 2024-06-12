@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 class ReqToTokenPool:
     def __init__(self, size, max_context_len):
+        self.size = size
+        self.max_context_len = max_context_len
         self.mem_state = torch.ones((size,), dtype=torch.bool, device="cuda")
         self.can_use_mem_size = size
         self.req_to_token = torch.empty(
@@ -35,9 +37,17 @@ class ReqToTokenPool:
         self.mem_state.fill_(1)
         self.can_use_mem_size = len(self.mem_state)
 
+    def used_size(self):
+        return len(torch.nonzero(~self.mem_state).squeeze(1))
+
 
 class TokenToKVPool:
     def __init__(self, size, dtype, head_num, head_dim, layer_num):
+        self.size = size
+        self.dtype = dtype
+        self.head_num = head_num
+        self.head_dim = head_dim
+        self.layer_num = layer_num
         self.mem_state = torch.zeros((size,), dtype=torch.int16, device="cuda")
         self.total_ref_ct = 0
 
