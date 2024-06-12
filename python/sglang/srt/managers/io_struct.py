@@ -27,6 +27,9 @@ class GenerateReqInput:
     return_text_in_logprobs: bool = False
     # Whether to stream output
     stream: bool = False
+    
+    # For profile
+    batch_size = 0
 
     def post_init(self):
 

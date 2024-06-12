@@ -1,0 +1,763 @@
+PortArgs(tokenizer_port=30001, router_port=30002, detokenizer_port=30003, peft_router_port=30004, peft_server_port=30005, model_port_args=[ModelPortArgs(nccl_port=30006, model_tp_ports=[30007])])
+[gpu_id=0] Set cuda device.
+[gpu_id=0] Init nccl begin.
+[gpu_id=0] Load weight begin. Avail mem=38.98 GB
+  0%|          | 0/292 [00:00<?, ?it/s]  0%|          | 1/292 [00:03<15:37,  3.22s/it]  3%|▎         | 8/292 [00:03<01:27,  3.24it/s]  6%|▌         | 17/292 [00:03<00:34,  8.06it/s]  9%|▉         | 26/292 [00:03<00:19, 13.92it/s] 12%|█▏        | 35/292 [00:03<00:12, 20.69it/s] 15%|█▌        | 44/292 [00:03<00:08, 28.10it/s] 18%|█▊        | 53/292 [00:03<00:06, 35.71it/s] 21%|██        | 62/292 [00:04<00:05, 43.04it/s] 24%|██▍       | 71/292 [00:04<00:04, 49.74it/s] 27%|██▋       | 80/292 [00:04<00:03, 55.42it/s] 30%|███       | 89/292 [00:04<00:03, 60.03it/s] 34%|███▎      | 98/292 [00:04<00:03, 63.73it/s] 36%|███▋      | 106/292 [00:06<00:16, 11.33it/s] 39%|███▉      | 115/292 [00:06<00:11, 15.39it/s] 42%|████▏     | 124/292 [00:06<00:08, 20.36it/s] 46%|████▌     | 133/292 [00:07<00:06, 26.00it/s] 49%|████▊     | 142/292 [00:07<00:04, 32.38it/s] 52%|█████▏    | 151/292 [00:07<00:03, 39.04it/s] 55%|█████▍    | 160/292 [00:07<00:02, 45.54it/s] 58%|█████▊    | 169/292 [00:07<00:02, 51.51it/s] 61%|██████    | 178/292 [00:07<00:02, 56.71it/s] 64%|██████▎   | 186/292 [00:10<00:12,  8.62it/s] 66%|██████▌   | 193/292 [00:10<00:08, 11.02it/s] 69%|██████▉   | 202/292 [00:10<00:05, 15.17it/s] 72%|███████▏  | 211/292 [00:11<00:04, 20.24it/s] 75%|███████▌  | 220/292 [00:11<00:02, 26.16it/s] 78%|███████▊  | 229/292 [00:11<00:01, 32.69it/s] 82%|████████▏ | 238/292 [00:11<00:01, 39.48it/s] 85%|████████▍ | 247/292 [00:11<00:00, 46.08it/s] 88%|████████▊ | 256/292 [00:11<00:00, 52.15it/s] 91%|█████████ | 265/292 [00:11<00:00, 57.44it/s] 94%|█████████▍| 274/292 [00:11<00:00, 61.73it/s] 97%|█████████▋| 283/292 [00:12<00:00, 66.68it/s]100%|█████████▉| 291/292 [00:12<00:00, 23.72it/s]
+[gpu_id=0] Load weight end. Type=LlamaForCausalLM. Avail mem=26.35 GB
+[gpu_id=0] Memory pool end. Avail mem=3.80 GB
+[gpu_id=0] max_total_num_tokens=45981, max_prefill_tokens=7663, context_len=2048, 
+server_args: enable_flashinfer=False, attention_reduce_in_fp32=False, disable_radix_cache=False, disable_regex_jump_forward=False, disable_disk_cache=False, 
+INFO:     Started server process [1111245]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:30000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58460 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 17. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 2.8839287757873535
+[gpu_id=0] #running-req: 1, #token: 57, token usage: 0.00, gen throughput (token/s): 2.00, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 97, token usage: 0.00, gen throughput (token/s): 8.68, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 137, token usage: 0.00, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 177, token usage: 0.00, gen throughput (token/s): 8.66, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 217, token usage: 0.00, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 257, token usage: 0.01, gen throughput (token/s): 8.68, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 297, token usage: 0.01, gen throughput (token/s): 8.66, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 337, token usage: 0.01, gen throughput (token/s): 8.67, #queue-req: 0
+request get!
+INFO:     127.0.0.1:58470 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38514 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 33. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.020458698272705078
+[gpu_id=0] #running-req: 1, #token: 51, token usage: 0.00, gen throughput (token/s): 3.74, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 91, token usage: 0.00, gen throughput (token/s): 8.69, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 131, token usage: 0.00, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 171, token usage: 0.00, gen throughput (token/s): 8.69, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 211, token usage: 0.00, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 251, token usage: 0.01, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 291, token usage: 0.01, gen throughput (token/s): 8.69, #queue-req: 0
+request get!
+INFO:     127.0.0.1:38520 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46760 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 65. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.04063248634338379
+[gpu_id=0] #running-req: 1, #token: 74, token usage: 0.00, gen throughput (token/s): 4.08, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 114, token usage: 0.00, gen throughput (token/s): 8.66, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 154, token usage: 0.00, gen throughput (token/s): 8.65, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 194, token usage: 0.00, gen throughput (token/s): 8.66, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 234, token usage: 0.01, gen throughput (token/s): 8.68, #queue-req: 0
+request get!
+INFO:     127.0.0.1:46772 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46828 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 129. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.04260730743408203
+[gpu_id=0] #running-req: 1, #token: 159, token usage: 0.00, gen throughput (token/s): 3.72, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 199, token usage: 0.00, gen throughput (token/s): 8.67, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 239, token usage: 0.01, gen throughput (token/s): 8.66, #queue-req: 0
+[gpu_id=0] #running-req: 1, #token: 279, token usage: 0.01, gen throughput (token/s): 8.68, #queue-req: 0
+request get!
+INFO:     127.0.0.1:46830 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40242 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 257. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.04660367965698242
+request get!
+INFO:     127.0.0.1:40244 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52540 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 513. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.07541465759277344
+[gpu_id=0] #running-req: 1, #token: 541, token usage: 0.01, gen throughput (token/s): 2.52, #queue-req: 0
+request get!
+INFO:     127.0.0.1:52546 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54968 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 1. #cached_token: 0. #new_token: 1025. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 1
+prefill time: 0.14020228385925293
+request get!
+INFO:     127.0.0.1:54978 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52902 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 34. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.054856061935424805
+[gpu_id=0] #running-req: 2, #token: 21, token usage: 0.00, gen throughput (token/s): 2.39, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 101, token usage: 0.00, gen throughput (token/s): 17.27, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 181, token usage: 0.00, gen throughput (token/s): 17.37, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 261, token usage: 0.01, gen throughput (token/s): 17.40, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 341, token usage: 0.01, gen throughput (token/s): 17.43, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 421, token usage: 0.01, gen throughput (token/s): 17.40, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 501, token usage: 0.01, gen throughput (token/s): 17.38, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 581, token usage: 0.01, gen throughput (token/s): 17.40, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 661, token usage: 0.01, gen throughput (token/s): 17.36, #queue-req: 0
+request get!
+INFO:     127.0.0.1:52912 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50948 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 66. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.06886839866638184
+[gpu_id=0] #running-req: 2, #token: 73, token usage: 0.00, gen throughput (token/s): 8.01, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 153, token usage: 0.00, gen throughput (token/s): 17.44, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 233, token usage: 0.01, gen throughput (token/s): 17.36, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 313, token usage: 0.01, gen throughput (token/s): 17.38, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 393, token usage: 0.01, gen throughput (token/s): 17.43, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 473, token usage: 0.01, gen throughput (token/s): 17.45, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 553, token usage: 0.01, gen throughput (token/s): 17.36, #queue-req: 0
+request get!
+INFO:     127.0.0.1:50956 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47972 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 130. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.03822517395019531
+[gpu_id=0] #running-req: 2, #token: 87, token usage: 0.00, gen throughput (token/s): 6.83, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 167, token usage: 0.00, gen throughput (token/s): 17.34, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 247, token usage: 0.01, gen throughput (token/s): 17.45, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 327, token usage: 0.01, gen throughput (token/s): 17.40, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 407, token usage: 0.01, gen throughput (token/s): 17.32, #queue-req: 0
+request get!
+INFO:     127.0.0.1:47984 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54002 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 258. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.05804944038391113
+[gpu_id=0] #running-req: 2, #token: 193, token usage: 0.00, gen throughput (token/s): 7.46, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 273, token usage: 0.01, gen throughput (token/s): 17.36, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 353, token usage: 0.01, gen throughput (token/s): 17.37, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 433, token usage: 0.01, gen throughput (token/s): 17.39, #queue-req: 0
+request get!
+INFO:     127.0.0.1:54010 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49992 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 514. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.0747995376586914
+request get!
+INFO:     127.0.0.1:50002 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36352 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 1026. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.1319870948791504
+[gpu_id=0] #running-req: 2, #token: 573, token usage: 0.01, gen throughput (token/s): 5.02, #queue-req: 0
+request get!
+INFO:     127.0.0.1:36364 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46252 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 2050. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.21492862701416016
+request get!
+INFO:     127.0.0.1:46264 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54640 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 68. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.026766061782836914
+[gpu_id=0] #running-req: 4, #token: 33, token usage: 0.00, gen throughput (token/s): 5.19, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 193, token usage: 0.00, gen throughput (token/s): 34.61, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 353, token usage: 0.01, gen throughput (token/s): 34.87, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 513, token usage: 0.01, gen throughput (token/s): 34.79, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 673, token usage: 0.01, gen throughput (token/s): 34.90, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 833, token usage: 0.02, gen throughput (token/s): 34.86, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 993, token usage: 0.02, gen throughput (token/s): 34.36, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 1153, token usage: 0.03, gen throughput (token/s): 34.69, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 1313, token usage: 0.03, gen throughput (token/s): 34.74, #queue-req: 0
+request get!
+INFO:     127.0.0.1:54648 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35008 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 132. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.043584346771240234
+[gpu_id=0] #running-req: 4, #token: 121, token usage: 0.00, gen throughput (token/s): 14.94, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 281, token usage: 0.01, gen throughput (token/s): 34.78, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 441, token usage: 0.01, gen throughput (token/s): 34.88, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 601, token usage: 0.01, gen throughput (token/s): 34.80, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 761, token usage: 0.02, gen throughput (token/s): 34.78, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 921, token usage: 0.02, gen throughput (token/s): 34.91, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 1081, token usage: 0.02, gen throughput (token/s): 34.70, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 1241, token usage: 0.03, gen throughput (token/s): 34.79, #queue-req: 0
+request get!
+INFO:     127.0.0.1:35020 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42068 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 260. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.046524763107299805
+[gpu_id=0] #running-req: 4, #token: 185, token usage: 0.00, gen throughput (token/s): 16.42, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 345, token usage: 0.01, gen throughput (token/s): 34.82, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 505, token usage: 0.01, gen throughput (token/s): 34.79, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 665, token usage: 0.01, gen throughput (token/s): 34.95, #queue-req: 0
+request get!
+INFO:     127.0.0.1:42076 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60888 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 516. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.07540225982666016
+[gpu_id=0] #running-req: 4, #token: 173, token usage: 0.00, gen throughput (token/s): 14.90, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 333, token usage: 0.01, gen throughput (token/s): 34.83, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 493, token usage: 0.01, gen throughput (token/s): 34.79, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 653, token usage: 0.01, gen throughput (token/s): 34.77, #queue-req: 0
+request get!
+INFO:     127.0.0.1:60890 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40176 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 1028. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.13036346435546875
+request get!
+INFO:     127.0.0.1:40184 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40192 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 2052. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.23270702362060547
+[gpu_id=0] #running-req: 4, #token: 549, token usage: 0.01, gen throughput (token/s): 9.38, #queue-req: 0
+[gpu_id=0] #running-req: 4, #token: 709, token usage: 0.02, gen throughput (token/s): 34.59, #queue-req: 0
+request get!
+INFO:     127.0.0.1:40202 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33062 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 4. #cached_token: 0. #new_token: 4100. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 4
+prefill time: 0.4141097068786621
+request get!
+INFO:     127.0.0.1:33068 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33076 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 136. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.03778886795043945
+[gpu_id=0] #running-req: 8, #token: 201, token usage: 0.00, gen throughput (token/s): 14.67, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 521, token usage: 0.01, gen throughput (token/s): 69.71, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 841, token usage: 0.02, gen throughput (token/s): 69.62, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1161, token usage: 0.03, gen throughput (token/s): 69.77, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1481, token usage: 0.03, gen throughput (token/s): 69.55, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1801, token usage: 0.04, gen throughput (token/s): 69.62, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 2121, token usage: 0.05, gen throughput (token/s): 69.36, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 2441, token usage: 0.05, gen throughput (token/s): 69.17, #queue-req: 0
+request get!
+INFO:     127.0.0.1:33078 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58782 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 264. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.048041582107543945
+[gpu_id=0] #running-req: 8, #token: 41, token usage: 0.00, gen throughput (token/s): 27.28, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 361, token usage: 0.01, gen throughput (token/s): 69.37, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 681, token usage: 0.01, gen throughput (token/s): 69.85, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1001, token usage: 0.02, gen throughput (token/s): 69.60, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1321, token usage: 0.03, gen throughput (token/s): 69.53, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1641, token usage: 0.04, gen throughput (token/s): 69.40, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1961, token usage: 0.04, gen throughput (token/s): 69.61, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 2281, token usage: 0.05, gen throughput (token/s): 69.29, #queue-req: 0
+request get!
+INFO:     127.0.0.1:58784 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43628 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 520. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.1049809455871582
+[gpu_id=0] #running-req: 8, #token: 321, token usage: 0.01, gen throughput (token/s): 29.70, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 641, token usage: 0.01, gen throughput (token/s): 69.59, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 961, token usage: 0.02, gen throughput (token/s): 69.73, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1281, token usage: 0.03, gen throughput (token/s): 68.64, #queue-req: 0
+request get!
+INFO:     127.0.0.1:43630 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54180 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 1032. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.14856433868408203
+[gpu_id=0] #running-req: 8, #token: 233, token usage: 0.01, gen throughput (token/s): 29.54, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 553, token usage: 0.01, gen throughput (token/s): 69.39, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 873, token usage: 0.02, gen throughput (token/s): 69.67, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 1193, token usage: 0.03, gen throughput (token/s): 69.40, #queue-req: 0
+request get!
+INFO:     127.0.0.1:54188 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42318 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 2056. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.2430257797241211
+request get!
+INFO:     127.0.0.1:42332 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52354 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 8. #cached_token: 0. #new_token: 4104. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 8
+prefill time: 0.36531591415405273
+[gpu_id=0] #running-req: 8, #token: 601, token usage: 0.01, gen throughput (token/s): 17.47, #queue-req: 0
+[gpu_id=0] #running-req: 8, #token: 921, token usage: 0.02, gen throughput (token/s): 69.07, #queue-req: 0
+request get!
+INFO:     127.0.0.1:52358 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38548 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 1. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6459915637969971
+new fill batch. #seq: 1. #cached_token: 1024. #new_token: 1. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 12.49%. 
+prefill batch size: 1
+prefill time: 0.022509336471557617
+request get!
+INFO:     127.0.0.1:38558 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59476 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 16. #cached_token: 0. #new_token: 272. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 16
+prefill time: 0.04875302314758301
+[gpu_id=0] #running-req: 16, #token: 417, token usage: 0.01, gen throughput (token/s): 28.12, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1057, token usage: 0.02, gen throughput (token/s): 139.22, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1697, token usage: 0.04, gen throughput (token/s): 139.23, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2337, token usage: 0.05, gen throughput (token/s): 139.16, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2977, token usage: 0.06, gen throughput (token/s): 138.84, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 3617, token usage: 0.08, gen throughput (token/s): 138.02, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 4257, token usage: 0.09, gen throughput (token/s): 130.26, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 4897, token usage: 0.11, gen throughput (token/s): 137.42, #queue-req: 0
+request get!
+INFO:     127.0.0.1:59480 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45410 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 16. #cached_token: 0. #new_token: 528. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 16
+prefill time: 0.07644319534301758
+[gpu_id=0] #running-req: 16, #token: 81, token usage: 0.00, gen throughput (token/s): 54.21, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 721, token usage: 0.02, gen throughput (token/s): 138.54, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1361, token usage: 0.03, gen throughput (token/s): 138.83, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2001, token usage: 0.04, gen throughput (token/s): 139.19, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2641, token usage: 0.06, gen throughput (token/s): 138.40, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 3281, token usage: 0.07, gen throughput (token/s): 137.98, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 3921, token usage: 0.09, gen throughput (token/s): 137.76, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 4561, token usage: 0.10, gen throughput (token/s): 138.03, #queue-req: 0
+request get!
+INFO:     127.0.0.1:45412 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50958 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 16. #cached_token: 0. #new_token: 1040. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 16
+prefill time: 0.12601327896118164
+[gpu_id=0] #running-req: 16, #token: 609, token usage: 0.01, gen throughput (token/s): 57.98, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1249, token usage: 0.03, gen throughput (token/s): 137.93, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1889, token usage: 0.04, gen throughput (token/s): 139.08, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2529, token usage: 0.06, gen throughput (token/s): 138.10, #queue-req: 0
+request get!
+INFO:     127.0.0.1:50964 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41032 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 16. #cached_token: 0. #new_token: 2064. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 16
+prefill time: 0.23776626586914062
+[gpu_id=0] #running-req: 16, #token: 369, token usage: 0.01, gen throughput (token/s): 58.44, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1009, token usage: 0.02, gen throughput (token/s): 138.66, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1649, token usage: 0.04, gen throughput (token/s): 138.46, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 2289, token usage: 0.05, gen throughput (token/s): 138.74, #queue-req: 0
+request get!
+INFO:     127.0.0.1:41048 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50534 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 16. #cached_token: 0. #new_token: 4112. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 16
+prefill time: 0.3920607566833496
+request get!
+INFO:     127.0.0.1:50538 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38810 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 14. #cached_token: 0. #new_token: 7182. #remaining_req: 2. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 14
+prefill time: 0.6101741790771484
+new fill batch. #seq: 2. #cached_token: 1024. #new_token: 2. #remaining_req: 0. #running_req: 14. tree_cache_hit_rate: 12.48%. 
+prefill batch size: 2
+prefill time: 0.015964031219482422
+[gpu_id=0] #running-req: 16, #token: 721, token usage: 0.02, gen throughput (token/s): 32.34, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1361, token usage: 0.03, gen throughput (token/s): 137.67, #queue-req: 0
+request get!
+INFO:     127.0.0.1:38814 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60824 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 9. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6261026859283447
+new fill batch. #seq: 9. #cached_token: 9216. #new_token: 9. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 56.20%. 
+prefill batch size: 9
+prefill time: 0.03184986114501953
+request get!
+INFO:     127.0.0.1:60836 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42952 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 32. #cached_token: 0. #new_token: 544. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 32
+prefill time: 0.07673454284667969
+[gpu_id=0] #running-req: 32, #token: 881, token usage: 0.02, gen throughput (token/s): 57.75, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 2161, token usage: 0.05, gen throughput (token/s): 276.13, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 3441, token usage: 0.07, gen throughput (token/s): 275.13, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 4721, token usage: 0.10, gen throughput (token/s): 274.69, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 6001, token usage: 0.13, gen throughput (token/s): 273.80, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 7281, token usage: 0.16, gen throughput (token/s): 272.97, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 8561, token usage: 0.19, gen throughput (token/s): 271.87, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 9841, token usage: 0.21, gen throughput (token/s): 270.54, #queue-req: 0
+request get!
+INFO:     127.0.0.1:42954 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42310 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 32. #cached_token: 0. #new_token: 1056. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 32
+prefill time: 0.12558960914611816
+[gpu_id=0] #running-req: 32, #token: 193, token usage: 0.00, gen throughput (token/s): 107.22, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 1473, token usage: 0.03, gen throughput (token/s): 277.07, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 2753, token usage: 0.06, gen throughput (token/s): 275.60, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 4033, token usage: 0.09, gen throughput (token/s): 275.32, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 5313, token usage: 0.12, gen throughput (token/s): 274.20, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 6593, token usage: 0.14, gen throughput (token/s): 273.08, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 7873, token usage: 0.17, gen throughput (token/s): 271.81, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 9153, token usage: 0.20, gen throughput (token/s): 271.16, #queue-req: 0
+request get!
+INFO:     127.0.0.1:42326 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47274 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 32. #cached_token: 0. #new_token: 2080. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 32
+prefill time: 0.21407294273376465
+[gpu_id=0] #running-req: 32, #token: 1217, token usage: 0.03, gen throughput (token/s): 117.37, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 2497, token usage: 0.05, gen throughput (token/s): 276.29, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 3777, token usage: 0.08, gen throughput (token/s): 275.41, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 5057, token usage: 0.11, gen throughput (token/s): 273.06, #queue-req: 0
+request get!
+INFO:     127.0.0.1:47290 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60474 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 32. #cached_token: 0. #new_token: 4128. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 32
+prefill time: 0.4065840244293213
+[gpu_id=0] #running-req: 32, #token: 673, token usage: 0.01, gen throughput (token/s): 114.80, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 1953, token usage: 0.04, gen throughput (token/s): 276.28, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 3233, token usage: 0.07, gen throughput (token/s): 272.73, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 4513, token usage: 0.10, gen throughput (token/s): 273.94, #queue-req: 0
+request get!
+INFO:     127.0.0.1:60488 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58910 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 29. #cached_token: 0. #new_token: 7453. #remaining_req: 3. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 29
+prefill time: 0.616288423538208
+new fill batch. #seq: 3. #cached_token: 768. #new_token: 3. #remaining_req: 0. #running_req: 29. tree_cache_hit_rate: 9.34%. 
+prefill batch size: 3
+prefill time: 0.01746678352355957
+request get!
+INFO:     127.0.0.1:58918 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53330 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 14. #cached_token: 0. #new_token: 7182. #remaining_req: 18. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 14
+prefill time: 0.6239626407623291
+new fill batch. #seq: 18. #cached_token: 9216. #new_token: 18. #remaining_req: 0. #running_req: 14. tree_cache_hit_rate: 56.14%. 
+prefill batch size: 18
+prefill time: 0.025229930877685547
+[gpu_id=0] #running-req: 32, #token: 993, token usage: 0.02, gen throughput (token/s): 60.49, #queue-req: 0
+[gpu_id=0] #running-req: 32, #token: 2273, token usage: 0.05, gen throughput (token/s): 272.61, #queue-req: 0
+request get!
+INFO:     127.0.0.1:53334 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58606 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 25. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6241073608398438
+new fill batch. #seq: 25. #cached_token: 25600. #new_token: 25. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 78.05%. 
+prefill batch size: 25
+prefill time: 0.03602886199951172
+request get!
+INFO:     127.0.0.1:51466 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59286 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 34. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.02048015594482422
+[gpu_id=0] #running-req: 2, #token: 75, token usage: 0.00, gen throughput (token/s): 0.62, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 155, token usage: 0.00, gen throughput (token/s): 17.35, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 235, token usage: 0.01, gen throughput (token/s): 17.38, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 315, token usage: 0.01, gen throughput (token/s): 17.34, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 395, token usage: 0.01, gen throughput (token/s): 17.33, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 475, token usage: 0.01, gen throughput (token/s): 17.35, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 555, token usage: 0.01, gen throughput (token/s): 17.28, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 635, token usage: 0.01, gen throughput (token/s): 17.31, #queue-req: 0
+request get!
+INFO:     127.0.0.1:59300 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44246 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 66. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.025639772415161133
+[gpu_id=0] #running-req: 2, #token: 47, token usage: 0.00, gen throughput (token/s): 7.47, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 127, token usage: 0.00, gen throughput (token/s): 17.35, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 207, token usage: 0.00, gen throughput (token/s): 17.37, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 287, token usage: 0.01, gen throughput (token/s): 17.37, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 367, token usage: 0.01, gen throughput (token/s): 17.33, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 447, token usage: 0.01, gen throughput (token/s): 17.32, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 527, token usage: 0.01, gen throughput (token/s): 17.34, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 607, token usage: 0.01, gen throughput (token/s): 17.31, #queue-req: 0
+request get!
+INFO:     127.0.0.1:44254 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57586 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 130. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.037542104721069336
+[gpu_id=0] #running-req: 2, #token: 141, token usage: 0.00, gen throughput (token/s): 8.25, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 221, token usage: 0.00, gen throughput (token/s): 17.19, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 301, token usage: 0.01, gen throughput (token/s): 17.39, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 381, token usage: 0.01, gen throughput (token/s): 17.34, #queue-req: 0
+request get!
+INFO:     127.0.0.1:57602 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58388 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 258. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.04819369316101074
+[gpu_id=0] #running-req: 2, #token: 167, token usage: 0.00, gen throughput (token/s): 8.22, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 247, token usage: 0.01, gen throughput (token/s): 17.39, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 327, token usage: 0.01, gen throughput (token/s): 17.35, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 407, token usage: 0.01, gen throughput (token/s): 17.34, #queue-req: 0
+request get!
+INFO:     127.0.0.1:58398 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47872 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 514. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.0742647647857666
+request get!
+INFO:     127.0.0.1:47882 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47884 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 1026. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.1318953037261963
+[gpu_id=0] #running-req: 2, #token: 547, token usage: 0.01, gen throughput (token/s): 5.02, #queue-req: 0
+[gpu_id=0] #running-req: 2, #token: 627, token usage: 0.01, gen throughput (token/s): 17.28, #queue-req: 0
+request get!
+INFO:     127.0.0.1:47900 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39198 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 2. #cached_token: 0. #new_token: 2050. #remaining_req: 0. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 2
+prefill time: 0.2535107135772705
+request get!
+INFO:     127.0.0.1:39208 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40860 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 1. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6233294010162354
+new fill batch. #seq: 1. #cached_token: 1024. #new_token: 1. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 12.49%. 
+prefill batch size: 1
+prefill time: 0.017238616943359375
+request get!
+INFO:     127.0.0.1:40868 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36068 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 1. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6389718055725098
+new fill batch. #seq: 1. #cached_token: 1024. #new_token: 1. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 12.49%. 
+prefill batch size: 1
+prefill time: 0.01681828498840332
+request get!
+INFO:     127.0.0.1:36072 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33776 - "GET /flush_cache HTTP/1.1" 200 OK
+batch_size: 0
+Cache flushed successfully!
+new fill batch. #seq: 14. #cached_token: 0. #new_token: 7182. #remaining_req: 2. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 14
+prefill time: 0.6417551040649414
+new fill batch. #seq: 2. #cached_token: 1024. #new_token: 2. #remaining_req: 0. #running_req: 14. tree_cache_hit_rate: 12.48%. 
+prefill batch size: 2
+prefill time: 0.01618218421936035
+[gpu_id=0] #running-req: 16, #token: 817, token usage: 0.02, gen throughput (token/s): 2.34, #queue-req: 0
+[gpu_id=0] #running-req: 16, #token: 1457, token usage: 0.03, gen throughput (token/s): 137.39, #queue-req: 0
+request get!
+INFO:     127.0.0.1:33784 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48374 - "GET /flush_cache HTTP/1.1" 200 OK
+Cache flushed successfully!
+batch_size: 0
+new fill batch. #seq: 7. #cached_token: 0. #new_token: 7175. #remaining_req: 9. #running_req: 0. tree_cache_hit_rate: 0.00%. 
+prefill batch size: 7
+prefill time: 0.6375350952148438
+new fill batch. #seq: 9. #cached_token: 9216. #new_token: 9. #remaining_req: 0. #running_req: 7. tree_cache_hit_rate: 56.20%. 
+prefill batch size: 9
+prefill time: 0.02273726463317871
+request get!
+INFO:     127.0.0.1:48376 - "POST /generate HTTP/1.1" 200 OK
+Process Process-2:
+INFO:     Shutting down
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data/aigc/sglang/python/sglang/srt/managers/detokenizer_manager.py", line 96, in start_detokenizer_process
+    loop.run_until_complete(manager.handle_loop())
+  File "uvloop/loop.pyx", line 1511, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1504, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1377, in uvloop.loop.Loop.run_forever
+  File "uvloop/loop.pyx", line 555, in uvloop.loop.Loop._run
+  File "uvloop/handles/poll.pyx", line 216, in uvloop.loop.__on_uvpoll_event
+  File "uvloop/cbhandles.pyx", line 83, in uvloop.loop.Handle._run
+  File "uvloop/cbhandles.pyx", line 66, in uvloop.loop.Handle._run
+  File "uvloop/loop.pyx", line 397, in uvloop.loop.Loop._read_from_self
+  File "uvloop/loop.pyx", line 402, in uvloop.loop.Loop._invoke_signals
+  File "uvloop/loop.pyx", line 377, in uvloop.loop.Loop._ceval_process_signals
+KeyboardInterrupt
+Process Process-1:
+INFO:     Finished server process [1111245]
+Exception ignored in atexit callback: <function dump_compile_times at 0x7f9c2bae8700>
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/torch/_dynamo/utils.py", line 318, in dump_compile_times
+    @atexit.register
+KeyboardInterrupt: 
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data/aigc/sglang/python/sglang/srt/managers/controller/manager_single.py", line 129, in start_controller_process
+    loop.run_until_complete(controller.start())
+  File "uvloop/loop.pyx", line 1511, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1504, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1377, in uvloop.loop.Loop.run_forever
+  File "uvloop/loop.pyx", line 555, in uvloop.loop.Loop._run
+  File "uvloop/handles/poll.pyx", line 216, in uvloop.loop.__on_uvpoll_event
+  File "uvloop/cbhandles.pyx", line 83, in uvloop.loop.Handle._run
+  File "uvloop/cbhandles.pyx", line 66, in uvloop.loop.Handle._run
+  File "uvloop/loop.pyx", line 397, in uvloop.loop.Loop._read_from_self
+  File "uvloop/loop.pyx", line 402, in uvloop.loop.Loop._invoke_signals
+  File "uvloop/loop.pyx", line 377, in uvloop.loop.Loop._ceval_process_signals
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 317, in _bootstrap
+    util._exit_function()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/util.py", line 334, in _exit_function
+    _run_finalizers(0)
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/util.py", line 300, in _run_finalizers
+    finalizer()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/util.py", line 224, in __call__
+    res = self._callback(*self._args, **self._kwargs)
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/concurrent/futures/process.py", line 780, in shutdown
+    self._executor_manager_thread.join()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/threading.py", line 1096, in join
+    self._wait_for_tstate_lock()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/threading.py", line 1116, in _wait_for_tstate_lock
+    if lock.acquire(block, timeout):
+KeyboardInterrupt
+INFO:     ASGI 'lifespan' protocol appears unsupported.
+Exception ignored in atexit callback: <function dump_compile_times at 0x7f6839ae4700>
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/torch/_dynamo/utils.py", line 318, in dump_compile_times
+    @atexit.register
+KeyboardInterrupt: 
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/data/aigc/sglang/python/sglang/launch_server.py", line 11, in <module>
+    launch_server(server_args, None)
+  File "/data/aigc/sglang/python/sglang/srt/server.py", line 295, in launch_server
+    uvicorn.run(
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/uvicorn/main.py", line 577, in run
+    server.run()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/uvicorn/server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1511, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1504, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1377, in uvloop.loop.Loop.run_forever
+  File "uvloop/loop.pyx", line 555, in uvloop.loop.Loop._run
+  File "uvloop/loop.pyx", line 474, in uvloop.loop.Loop._on_idle
+  File "uvloop/cbhandles.pyx", line 83, in uvloop.loop.Handle._run
+  File "uvloop/cbhandles.pyx", line 63, in uvloop.loop.Handle._run
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/uvicorn/server.py", line 68, in serve
+    with self.capture_signals():
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/site-packages/uvicorn/server.py", line 328, in capture_signals
+    signal.raise_signal(captured_signal)
+KeyboardInterrupt
+Exception ignored in atexit callback: <function _exit_function at 0x7f475237d090>
+Traceback (most recent call last):
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/util.py", line 357, in _exit_function
+    p.join()
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/process.py", line 149, in join
+    res = self._popen.wait(timeout)
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/popen_fork.py", line 43, in wait
+    return self.poll(os.WNOHANG if timeout == 0.0 else 0)
+  File "/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/popen_fork.py", line 27, in poll
+    pid, sts = os.waitpid(self.pid, flag)
+KeyboardInterrupt: 
+/data/aigc/.conda/envs/sglang/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

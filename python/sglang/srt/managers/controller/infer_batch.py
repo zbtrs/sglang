@@ -238,6 +238,9 @@ class Batch:
             return_logprob=return_logprob,
         )
 
+    def get_len(self):
+        return len(self.reqs)
+
     def is_empty(self):
         return len(self.reqs) == 0
 

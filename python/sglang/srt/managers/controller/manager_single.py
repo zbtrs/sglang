@@ -24,34 +24,33 @@ class ControllerSingle:
         self.recv_from_tokenizer.bind(f"tcp://127.0.0.1:{port_args.router_port}")
 
         self.send_to_detokenizer = context.socket(zmq.PUSH)
-        self.send_to_detokenizer.connect(
-            f"tcp://127.0.0.1:{port_args.detokenizer_port}"
-        )
+        self.send_to_detokenizer.connect(f"tcp://127.0.0.1:{port_args.detokenizer_port}")
         
         self.send_to_peft_server = context.socket(zmq.PUSH)
-        self.send_to_peft_server.connect(
-            f"tcp://127.0.0.1:{port_args.peft_server_port}"
-        )
+        self.send_to_peft_server.connect(f"tcp://127.0.0.1:{port_args.peft_server_port}")
         
         self.recv_from_peft_server = context.socket(zmq.PULL)
-        self.recv_from_peft_server.bind(
-            f"tcp://127.0.0.1:{port_args.peft_router_port}"
-        )
+        self.recv_from_peft_server.bind(f"tcp://127.0.0.1:{port_args.peft_router_port}")
 
         # Init status
         self.model_client = model_client
         self.peft_manager = PeftManager()
-        self.recv_reqs = []
-        self.recv_peft = []
         self.running_request = 0
 
         # Init some configs
         self.request_dependency_delay = global_config.request_dependency_delay
 
+        # Use asyncio.Queue for synchronization
+        self.recv_queue = asyncio.Queue()
+        self.recv_peft = []
+
     async def loop_for_forward(self):
         while True:
-            next_step_input = list(self.recv_reqs)
-            self.recv_reqs = []
+            await asyncio.sleep(1)  # Check every 1 second
+            next_step_input = []
+            while not self.recv_queue.empty():
+                next_step_input.append(await self.recv_queue.get())
+
             if next_step_input:
                 await self.process_step(next_step_input)
             elif self.peft_manager.task_queue and self.running_request == 0:
@@ -77,13 +76,12 @@ class ControllerSingle:
         if not slept:
             await asyncio.sleep(global_config.wait_for_new_request_delay)
 
-
     async def loop_for_recv_requests(self):
         while True:
             recv_req = await self.recv_from_tokenizer.recv_pyobj()
             self.running_request = self.running_request + 1
-            self.recv_reqs.append(recv_req)
-    
+            await self.recv_queue.put(recv_req)
+
     async def loop_for_recv_peft(self):
         while True:
             recv_peft = await self.recv_from_peft_server.recv_pyobj()

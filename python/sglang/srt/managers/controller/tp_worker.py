@@ -7,6 +7,7 @@ from typing import List
 
 import rpyc
 import torch
+import time
 from rpyc.utils.classic import obtain
 
 from sglang.global_config import global_config
@@ -22,6 +23,7 @@ from sglang.srt.managers.io_struct import (
 from sglang.srt.managers.controller.infer_batch import Batch, FinishReason, ForwardMode, Req
 from sglang.srt.managers.controller.model_runner import ModelRunner
 from sglang.srt.managers.controller.radix_cache import RadixCache
+from sglang.srt.managers.controller.profile import batch_size
 from sglang.srt.managers.controller.schedule_heuristic import ScheduleHeuristic
 from sglang.srt.model_config import ModelConfig
 from sglang.srt.server_args import ModelPortArgs, ServerArgs
@@ -33,6 +35,7 @@ from sglang.srt.utils import (
     suppress_other_loggers,
 )
 from sglang.utils import get_exception_traceback
+
 
 logger = logging.getLogger("srt.model_tp")
 
@@ -194,10 +197,16 @@ class ModelTpServer:
     @torch.inference_mode()
     def forward_step(self):
         new_batch = self.get_new_fill_batch()
+        global batch_size
 
+        # logger.info(f"batch_size: {batch_size}")
         if new_batch is not None:
             # Run a new fill batch
+            logger.info(f"prefill batch size: {new_batch.get_len()}")
+            prefill_start_time = time.time()
             self.forward_fill_batch(new_batch)
+            prefill_end_time = time.time()
+            logger.info(f"prefill time: {prefill_end_time - prefill_start_time}")
             self.cache_filled_batch(new_batch)
 
             if not new_batch.is_empty():
@@ -305,6 +314,8 @@ class ModelTpServer:
             and len(self.running_batch.reqs) > self.max_running_requests
         ):
             return None
+
+        # logger.info(f"forward_queue len: {len(self.forward_queue)}")
 
         # Compute matched prefix length
         for req in self.forward_queue:

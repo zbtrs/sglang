@@ -33,6 +33,7 @@ from sglang.srt.managers.detokenizer_manager import start_detokenizer_process
 from sglang.srt.managers.io_struct import GenerateReqInput
 from sglang.srt.managers.controller.manager_single import start_controller_process as start_controller_process_single
 from sglang.srt.managers.controller.manager_multi import start_controller_process as start_controller_process_multi
+from sglang.srt.managers.controller.profile import batch_size
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
 from sglang.srt.openai_api_adapter import (
     load_chat_template_for_openai_api,
@@ -99,6 +100,10 @@ async def do_peft(request: Request):
 
 async def generate_request(obj: GenerateReqInput, request: Request):   
     print('request get!') 
+    global batch_size
+    batch_size = obj.batch_size
+    logger = logging.getLogger("srt.model_tp")
+    logger.info(f"batch_size: {batch_size}")
     if obj.stream:
         async def stream_results():
             try:
@@ -242,43 +247,45 @@ def launch_server(server_args: ServerArgs, pipe_finish_writer, model_overide_arg
 
     # Send a warmup request
     def _wait_and_warmup():
-        headers = {}
-        url = server_args.url()
-        if server_args.api_key:
-            headers[API_KEY_HEADER_NAME] = server_args.api_key
+        pass
+        # headers = {}
+        # url = server_args.url()
+        # if server_args.api_key:
+        #     headers[API_KEY_HEADER_NAME] = server_args.api_key
 
-        # Wait until the server is launched
-        for _ in range(120):
-            time.sleep(0.5)
-            try:
-                requests.get(url + "/get_model_info", timeout=5, headers=headers)
-                break
-            except requests.exceptions.RequestException as e:
-                pass
+        # # Wait until the server is launched
+        # for _ in range(120):
+        #     time.sleep(0.5)
+        #     try:
+        #         requests.get(url + "/get_model_info", timeout=5, headers=headers)
+        #         break
+        #     except requests.exceptions.RequestException as e:
+        #         pass
 
-        # Send a warmup request
-        try:
-            res = requests.post(
-                url + "/generate",
-                json={
-                    "text": "The capital city of France is",
-                    "sampling_params": {
-                        "temperature": 0,
-                        "max_new_tokens": 16,
-                    },
-                },
-                headers=headers,
-                timeout=600,
-            )
-            assert res.status_code == 200
-        except Exception as e:
-            if pipe_finish_writer is not None:
-                pipe_finish_writer.send(get_exception_traceback())
-            print(f"Initialization failed. warmup error: {e}")
-            raise e
+        # # Send a warmup request
+        # try:
+        #     res = requests.post(
+        #         url + "/generate",
+        #         json={
+        #             "text": "The capital city of France is",
+        #             "batch_size": 1,
+        #             "sampling_params": {
+        #                 "temperature": 0,
+        #                 "max_new_tokens": 16,
+        #             },
+        #         },
+        #         headers=headers,
+        #         timeout=600,
+        #     )
+        #     assert res.status_code == 200
+        # except Exception as e:
+        #     if pipe_finish_writer is not None:
+        #         pipe_finish_writer.send(get_exception_traceback())
+        #     print(f"Initialization failed. warmup error: {e}")
+        #     raise e
 
-        if pipe_finish_writer is not None:
-            pipe_finish_writer.send("init ok")
+        # if pipe_finish_writer is not None:
+        #     pipe_finish_writer.send("init ok")
 
     t = threading.Thread(target=_wait_and_warmup)
     t.start()
