@@ -8,9 +8,10 @@ import zmq.asyncio
 
 from sglang.global_config import global_config
 from sglang.srt.managers.controller.tp_worker import ModelTpClient
-from sglang.srt.managers.controller.peft_manager import PeftConfig,PeftManager,PeftTask
+from sglang.srt.managers.controller.peft_manager import PeftArgument,PeftTask,PeftManager
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.utils import get_exception_traceback
+from sglang.peft_utils.prepare_peft_task import get_task
 
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -41,6 +42,8 @@ class ControllerSingle:
         # Init status
         self.model_client = model_client
         self.peft_manager = PeftManager()
+        peft_task = get_task()
+        self.peft_manager.add_task(peft_task)
         self.recv_reqs = []
         self.recv_peft = []
 
@@ -54,8 +57,8 @@ class ControllerSingle:
 
             if next_step_input:
                 await self.process_step(next_step_input)
-            elif self.peft_manager.task_queue:
-                await self.peft_manager.run_next_step()
+            elif self.peft_manager.has_tasks():
+                await self.peft_manager.train_step()
             else:
                 await self.process_step(next_step_input)
 
@@ -86,12 +89,12 @@ class ControllerSingle:
     async def loop_for_recv_peft(self):
         while True:
             recv_peft = await self.recv_from_peft_server.recv_pyobj()
-            recv_peft.post_init()
-            task_state = {
-                "task": recv_peft,
-                "state": None
-            }
-            self.peft_manager.add_task(task_state)
+            # recv_peft.post_init()
+            # task_state = {
+            #     "task": recv_peft,
+            #     "state": None
+            # }
+            # self.peft_manager.add_task(task_state)
 
 
 
