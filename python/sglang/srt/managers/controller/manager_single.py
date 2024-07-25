@@ -12,7 +12,7 @@ from sglang.srt.managers.controller.peft_manager import PeftArgument,PeftTask,Pe
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.utils import get_exception_traceback
 from sglang.peft_utils.prepare_peft_task import get_task
-
+import time
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -41,24 +41,26 @@ class ControllerSingle:
 
         # Init status
         self.model_client = model_client
+        self.recv_reqs = []
+        self.recv_peft = []
         self.peft_manager = PeftManager()
         peft_task = get_task()
         self.peft_manager.add_task(peft_task)
-        self.recv_reqs = []
-        self.recv_peft = []
-
         # Init some configs
         self.request_dependency_delay = global_config.request_dependency_delay
+        self.peft_delay = global_config.peft_delay
 
     async def loop_for_forward(self):
         while True:
             next_step_input = list(self.recv_reqs)
             self.recv_reqs = []
+            print(f"next_step_input: {next_step_input}")
 
             if next_step_input:
                 await self.process_step(next_step_input)
             elif self.peft_manager.has_tasks():
                 await self.peft_manager.train_step()
+                await asyncio.sleep(self.peft_delay)
             else:
                 await self.process_step(next_step_input)
 
@@ -84,6 +86,7 @@ class ControllerSingle:
     async def loop_for_recv_requests(self):
         while True:
             recv_req = await self.recv_from_tokenizer.recv_pyobj()
+            print(f"recv_req: {recv_req}")
             self.recv_reqs.append(recv_req)
     
     async def loop_for_recv_peft(self):
@@ -123,5 +126,5 @@ def start_controller_process(
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.create_task(controller.loop_for_recv_requests())
-    loop.create_task(controller.loop_for_recv_peft())
+    # loop.create_task(controller.loop_for_recv_peft())
     loop.run_until_complete(controller.loop_for_forward())

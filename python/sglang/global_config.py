@@ -29,6 +29,8 @@ class GlobalConfig:
         self.request_dependency_delay = 0.03
         self.wait_for_new_request_delay = 0.0006
 
+        self.peft_delay = 0.03
+
         # New generation token ratio estimation
         self.base_new_token_ratio = 0.4
         self.base_min_new_token_ratio = 0.2

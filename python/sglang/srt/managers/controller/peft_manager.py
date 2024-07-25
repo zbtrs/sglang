@@ -230,7 +230,7 @@ class PeftManager:
             inputs = task._prepare_inputs(inputs)
             loss = task.compute_loss(inputs=inputs)
             loss.backward()
-            # print(f"{loss}")
+            print(f"{loss}")
             task.optimizer.step()
             task.lr_scheduler.step()
             task.optimizer.zero_grad()
