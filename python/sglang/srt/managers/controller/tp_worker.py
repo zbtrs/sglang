@@ -34,6 +34,8 @@ from sglang.srt.utils import (
 )
 from sglang.utils import get_exception_traceback
 
+from test.srt.model.bench_llama_low_api import decode
+
 logger = logging.getLogger("srt.model_tp")
 
 
@@ -211,7 +213,10 @@ class ModelTpServer:
                 # Run a few decode batches continuously for reducing overhead
                 for _ in range(10):
                     self.num_generated_tokens += len(self.running_batch.reqs)
+                    decode_start_time = time.time()
                     self.forward_decode_batch(self.running_batch)
+                    decode_end_time = time.time()
+                    logger.info(f"decode time: {decode_end_time - decode_start_time}")
 
                     # Print stats
                     if self.tp_rank == 0:
