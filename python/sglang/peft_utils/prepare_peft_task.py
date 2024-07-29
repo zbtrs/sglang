@@ -78,7 +78,7 @@ def get_task():
 
     LEARNING_RATE = 1e-4
     NUM_EPOCHS = 10
-    BATCH_SIZE = 64
+    BATCH_SIZE = 16
     WEIGHT_DECAY = 0.001
     MAX_GRAD_NORM = 0.3
     gradient_accumulation_steps = 16

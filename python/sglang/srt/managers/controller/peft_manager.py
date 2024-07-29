@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Un
 from collections.abc import Mapping
 # from utils import print_memory_usage
 import queue
+import time
 
 def is_peft_available() -> bool:
     return find_spec("peft") is not None
@@ -221,6 +222,7 @@ class PeftManager:
             print("No tasks in the queue.")
             return
 
+        start_time = time.time()
         task = self.task_queue.get()
         task.model.train()
 
@@ -228,8 +230,14 @@ class PeftManager:
             epoch_iterator = iter(task.data_loader)
             inputs = next(epoch_iterator)
             inputs = task._prepare_inputs(inputs)
+            forward_start_time = time.time()
             loss = task.compute_loss(inputs=inputs)
+            forward_end_time = time.time()
+            print(f"forward time:{forward_end_time - forward_start_time}")
+            backward_start_time = time.time()
             loss.backward()
+            backward_end_time = time.time()
+            print(f"backward time:{backward_end_time - backward_start_time}")
             print(f"{loss}")
             task.optimizer.step()
             task.lr_scheduler.step()
@@ -240,6 +248,8 @@ class PeftManager:
             self.release_resources(task)
         # except Exception as e:
         #     print(f"Error during training step: {e}")
+        end_time = time.time()
+        print(f"peft time:{end_time - start_time}")
 
     def release_resources(self, task: PeftTask):
         del task.model
