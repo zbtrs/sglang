@@ -58,6 +58,8 @@ def get_task():
     device_map = "auto"
     df = pd.read_csv("/data02/peft-inference/medquad.csv")
 
+    torch.manual_seed(0)
+
     data = Dataset.from_pandas(pd.DataFrame(data=df))
     model_name = "/data02/hyf/llama2"
 
@@ -78,7 +80,7 @@ def get_task():
 
     LEARNING_RATE = 1e-4
     NUM_EPOCHS = 10
-    BATCH_SIZE = 16
+    BATCH_SIZE = 4
     WEIGHT_DECAY = 0.001
     MAX_GRAD_NORM = 0.3
     gradient_accumulation_steps = 16

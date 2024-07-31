@@ -218,9 +218,9 @@ class PeftTask:
             else:
                 self.layer_num += 1
         else:
-            print(f"loss: {self.loss}")
             if self.layer_num == 31:
                 self.loss.backward()
+                self.loss = None
             grad_outputs = self.model.base_model.model.base_model.forward_states[self.layer_num].grad
             self.model.base_model.model.base_model.end_states[self.layer_num].backward(grad_outputs)
             self.layer_num -= 1
