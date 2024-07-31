@@ -229,8 +229,9 @@ class PeftTask:
                 self.layer_num = 0
                 self.is_backward = False
 
-                return True
                 print(f"step done")
+                return True
+
 
         return False
 
