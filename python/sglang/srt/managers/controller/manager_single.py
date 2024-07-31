@@ -54,7 +54,7 @@ class ControllerSingle:
         while True:
             next_step_input = list(self.recv_reqs)
             self.recv_reqs = []
-            print(f"next_step_input: {next_step_input}")
+            # print(f"next_step_input: {next_step_input}")
 
             if next_step_input:
                 await self.process_step(next_step_input)

@@ -82,6 +82,11 @@ class PeftTask:
             num_warmup_steps=0,
             num_training_steps=(len(self.data_loader) * self.args.num_train_epochs),
         )
+        self.epoch_iterator = iter(self.data_loader)
+        self.is_backward = False
+        self.layer_num = 0
+        self.inputs = None
+        self.loss = None
 
     def __prepare_non_packed_dataloader(
             self,
@@ -194,20 +199,56 @@ class PeftTask:
         loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
         return (loss, outputs) if return_outputs else loss
 
-    def pipeline_compute_loss(self, inputs, return_outputs=False):
-        for i in range(32):
-            inputs['is_pipeline'] = True
-            inputs['layer_number'] = i
-            if i == 0:
-                hidden_states = self.model(**inputs)
-            elif i < 31:
-                inputs['hidden_states'] = hidden_states
-                hidden_states = self.model(**inputs)
+    def pipeline_compute(self,
+                              inputs,
+                              return_outputs=False):
+        if self.is_backward is False:
+            if self.layer_num == 0:
+                self.inputs = inputs
+            self.inputs['is_pipeline'] = True
+            self.inputs['layer_number'] = self.layer_num
+            hidden_states = self.model(**self.inputs)
+            self.inputs['hidden_states'] = hidden_states
+
+            if self.layer_num == 31:
+                # forward end
+                self.loss = hidden_states["loss"] if isinstance(hidden_states, dict) else hidden_states[0]
+                print(f"loss: {self.loss}")
+                self.is_backward = True
             else:
-                inputs['hidden_states'] = hidden_states
-                outputs = self.model(**inputs)
-                loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
-                return (loss, outputs) if return_outputs else loss
+                self.layer_num += 1
+        else:
+            print(f"loss: {self.loss}")
+            if self.layer_num == 31:
+                self.loss.backward()
+            grad_outputs = self.model.base_model.model.base_model.forward_states[self.layer_num].grad
+            self.model.base_model.model.base_model.end_states[self.layer_num].backward(grad_outputs)
+            self.layer_num -= 1
+
+            if self.layer_num < 0:
+                self.layer_num = 0
+                self.is_backward = False
+
+                return True
+                print(f"step done")
+
+        return False
+
+
+        # for i in range(32):
+        #     inputs['is_pipeline'] = True
+        #     inputs['layer_number'] = i
+        #     if i == 0:
+        #         hidden_states = self.model(**inputs)
+        #     elif i < 31:
+        #         inputs['hidden_states'] = hidden_states
+        #         hidden_states = self.model(**inputs)
+        #     else:
+        #         inputs['hidden_states'] = hidden_states
+        #         outputs = self.model(**inputs)
+        #         loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
+        #         return (loss, outputs) if return_outputs else loss
+
 
     def train(self):
         # print_memory_usage("before train")
@@ -251,27 +292,31 @@ class PeftManager:
         task.model.train()
 
         try:
-            epoch_iterator = iter(task.data_loader)
-            inputs = next(epoch_iterator)
-            inputs = task._prepare_inputs(inputs)
-            loss = task.pipeline_compute_loss(inputs=inputs)
-            print(f"loss:{loss}")
+            if task.is_backward is False and task.layer_num == 0:
+                inputs = next(task.epoch_iterator)
+                inputs = task._prepare_inputs(inputs)
+                result = task.pipeline_compute(inputs=inputs)
+            else:
+                result = task.pipeline_compute(inputs=None)
+            # loss = task.pipeline_compute_loss(inputs=inputs)
+            # print(f"loss:{loss}")
             # print(f"{inputs['input_ids'].size()}")
-            backward_start_time = time.time()
-            loss.backward()
-            # print(f"backward time1: {time.time() - backward_start_time}")
-            for i in range(len(task.model.base_model.model.base_model.forward_states) - 1, -1, -1):
-                grad_outputs = task.model.base_model.model.base_model.forward_states[i].grad
-                task.model.base_model.model.base_model.end_states[i].backward(grad_outputs)
+            # backward_start_time = time.time()
+            # loss.backward()
+            # # print(f"backward time1: {time.time() - backward_start_time}")
+            # for i in range(len(task.model.base_model.model.base_model.forward_states) - 1, -1, -1):
+            #     grad_outputs = task.model.base_model.model.base_model.forward_states[i].grad
+            #     task.model.base_model.model.base_model.end_states[i].backward(grad_outputs)
 
             # print(f"{task.model.base_model}")
 
-            backward_end_time = time.time()
-            print(f"backward time: {backward_end_time - backward_start_time}")
+            # backward_end_time = time.time()
+            # print(f"backward time: {backward_end_time - backward_start_time}")
             # print(f"{loss}")
-            task.optimizer.step()
-            task.lr_scheduler.step()
-            task.optimizer.zero_grad()
+            if result is True:
+                task.optimizer.step()
+                task.lr_scheduler.step()
+                task.optimizer.zero_grad()
             self.task_queue.put(task)
         except StopIteration:
             print("Finished one epoch for a task.")
