@@ -59,7 +59,7 @@ def get_task():
     df = pd.read_csv("/data02/peft-inference/medquad.csv")
 
     data = Dataset.from_pandas(pd.DataFrame(data=df))
-    model_name = "/data02/llama2"
+    model_name = "/data02/hyf/llama2"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token

@@ -19,7 +19,7 @@ from peft import LoraConfig
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, get_linear_schedule_with_warmup
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Union
 from collections.abc import Mapping
-from utils import print_memory_usage
+# from utils import print_memory_usage
 import queue
 import time
 
@@ -210,7 +210,7 @@ class PeftTask:
                 return (loss, outputs) if return_outputs else loss
 
     def train(self):
-        print_memory_usage("before train")
+        # print_memory_usage("before train")
         tr_loss = torch.tensor(0.0).to(self.device)
         self._total_loss_scalar = 0.0
         self.model.zero_grad()
@@ -221,15 +221,15 @@ class PeftTask:
 
                 inputs = self._prepare_inputs(inputs)
                 loss = self.compute_loss(inputs=inputs)
-                print_memory_usage("after train")
+                # print_memory_usage("after train")
 
                 del inputs
                 loss.backward()
-                print_memory_usage("after backward")
+                # print_memory_usage("after backward")
 
                 tr_loss += loss.detach()
                 self.optimizer.step()
-                print_memory_usage("after optimizer")
+                # print_memory_usage("after optimizer")
                 self.lr_scheduler.step()
                 self.optimizer.zero_grad()
                 print(f"{step}, {tr_loss}, {loss}")
@@ -242,7 +242,7 @@ class PeftManager:
     def add_task(self, task: PeftTask):
         self.task_queue.put(task)
 
-    def train_step(self):
+    async def train_step(self):
         if self.task_queue.empty():
             print("No tasks in the queue.")
             return
