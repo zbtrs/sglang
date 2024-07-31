@@ -1,5 +1,6 @@
 import gc
 
+from ray.train.torch import backward
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -18,17 +19,22 @@ from peft import LoraConfig
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, get_linear_schedule_with_warmup
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Union
 from collections.abc import Mapping
-# from utils import print_memory_usage
+from utils import print_memory_usage
 import queue
 import time
 
+
 def is_peft_available() -> bool:
     return find_spec("peft") is not None
+
+
 if is_peft_available():
     from peft import PeftConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
 
+
 class PeftArgument:
-    def __init__(self,output_dir,batch_size,gradient_accumulation_steps,learning_rate,logging_steps,num_train_epochs,max_steps):
+    def __init__(self, output_dir, batch_size, gradient_accumulation_steps, learning_rate, logging_steps,
+                 num_train_epochs, max_steps):
         self.output_dir = output_dir
         self.batch_size = batch_size
         self.gradient_accumulation_steps = gradient_accumulation_steps
@@ -36,11 +42,14 @@ class PeftArgument:
         self.logging_steps = logging_steps
         self.num_train_epochs = num_train_epochs
         self.max_steps = max_steps
-        
+
+
 class PeftTask:
-    def __init__(self,model_name,train_dataset,peft_config: LoraConfig,dataset_text_field,max_seq,args: PeftArgument):
+    def __init__(self, model_name, train_dataset, peft_config: LoraConfig, dataset_text_field, max_seq,
+                 args: PeftArgument):
         if isinstance(model_name, str):
-            self.model = AutoModelForCausalLM.from_pretrained(model_name,torch_dtype=torch.bfloat16) # TODO: add model_init_kwargs
+            self.model = AutoModelForCausalLM.from_pretrained(model_name,
+                                                              torch_dtype=torch.bfloat16)  # TODO: add model_init_kwargs
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
             if getattr(self.tokenizer, "pad_token", None) is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -48,7 +57,7 @@ class PeftTask:
             raise ValueError(
                 "You should pass a model_name using str"
             )
-        self.peft_config = peft_config    
+        self.peft_config = peft_config
         self.device = "cuda"
         if not isinstance(self.model, PeftModel):
             self.model = get_peft_model(self.model, self.peft_config)
@@ -73,17 +82,17 @@ class PeftTask:
             num_warmup_steps=0,
             num_training_steps=(len(self.data_loader) * self.args.num_train_epochs),
         )
-        
+
     def __prepare_non_packed_dataloader(
-        self,
-        tokenizer,
-        dataset,
-        dataset_text_field,
-        max_seq_length,
-        batch_size,
-        formatting_func=None,
-        add_special_tokens=True,
-        remove_unused_columns=True,
+            self,
+            tokenizer,
+            dataset,
+            dataset_text_field,
+            max_seq_length,
+            batch_size,
+            formatting_func=None,
+            add_special_tokens=True,
+            remove_unused_columns=True,
     ):
         use_formatting_func = formatting_func is not None and dataset_text_field is None
 
@@ -148,11 +157,11 @@ class PeftTask:
         }
 
         if not isinstance(train_dataset, IterableDataset):
-            dataloader_params["sampler"] = RandomSampler(self.train_dataset)
+            dataloader_params["sampler"] = SequentialSampler(self.train_dataset)
             dataloader_params["drop_last"] = False
 
         return DataLoader(train_dataset, **dataloader_params)
-    
+
     def _prepare_input(self, data: Union[torch.Tensor, Any]) -> Union[torch.Tensor, Any]:
         if isinstance(data, Mapping):
             return type(data)({k: self._prepare_input(v) for k, v in data.items()})
@@ -162,7 +171,7 @@ class PeftTask:
             kwargs = {"device": self.device}
             return data.to(**kwargs)
         return data
-    
+
     def _prepare_inputs(self, inputs: Dict[str, Union[torch.Tensor, Any]]) -> Dict[str, Union[torch.Tensor, Any]]:
         inputs = self._prepare_input(inputs)
         if len(inputs) == 0:
@@ -170,10 +179,11 @@ class PeftTask:
                 "The batch received was empty, your model won't be able to train on it. Double-check that your "
                 f"training dataset contains keys expected by the model: {','.join(self._signature_columns)}."
             )
-            
+
         return inputs
-    
-    def compute_loss(self,inputs,return_outputs=False):
+
+    def compute_loss(self, inputs, return_outputs=False):
+        inputs['is_pipeline'] = False
         outputs = self.model(**inputs)
         if isinstance(outputs, dict) and "loss" not in outputs:
             raise ValueError(
@@ -183,33 +193,48 @@ class PeftTask:
         # We don't use .loss here since the model may return tuples instead of ModelOutput.
         loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
         return (loss, outputs) if return_outputs else loss
-    
+
+    def pipeline_compute_loss(self, inputs, return_outputs=False):
+        for i in range(32):
+            inputs['is_pipeline'] = True
+            inputs['layer_number'] = i
+            if i == 0:
+                hidden_states = self.model(**inputs)
+            elif i < 31:
+                inputs['hidden_states'] = hidden_states
+                hidden_states = self.model(**inputs)
+            else:
+                inputs['hidden_states'] = hidden_states
+                outputs = self.model(**inputs)
+                loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
+                return (loss, outputs) if return_outputs else loss
+
     def train(self):
-        pass
-        # print_memory_usage("before train")
-        # tr_loss = torch.tensor(0.0).to(self.device)
-        # self._total_loss_scalar = 0.0
-        # self.model.zero_grad()
-        # for epoch in range(self.args.num_train_epochs):
-        #     epoch_iterator = self.data_loader
-        #     for step,inputs in enumerate(epoch_iterator):            
-        #         self.model.train()
+        print_memory_usage("before train")
+        tr_loss = torch.tensor(0.0).to(self.device)
+        self._total_loss_scalar = 0.0
+        self.model.zero_grad()
+        for epoch in range(self.args.num_train_epochs):
+            epoch_iterator = self.data_loader
+            for step, inputs in enumerate(epoch_iterator):
+                self.model.train()
 
-        #         inputs = self._prepare_inputs(inputs)
-        #         loss = self.compute_loss(inputs=inputs)
-        #         print_memory_usage("after train")
+                inputs = self._prepare_inputs(inputs)
+                loss = self.compute_loss(inputs=inputs)
+                print_memory_usage("after train")
 
-        #         del inputs
-        #         loss.backward()
-        #         print_memory_usage("after backward")
+                del inputs
+                loss.backward()
+                print_memory_usage("after backward")
 
-        #         tr_loss += loss.detach()
-        #         self.optimizer.step()
-        #         print_memory_usage("after optimizer")
-        #         self.lr_scheduler.step()
-        #         self.optimizer.zero_grad()
-        #         print(f"{step}, {tr_loss}, {loss}")
-                
+                tr_loss += loss.detach()
+                self.optimizer.step()
+                print_memory_usage("after optimizer")
+                self.lr_scheduler.step()
+                self.optimizer.zero_grad()
+                print(f"{step}, {tr_loss}, {loss}")
+
+
 class PeftManager:
     def __init__(self):
         self.task_queue = queue.Queue()
@@ -217,12 +242,11 @@ class PeftManager:
     def add_task(self, task: PeftTask):
         self.task_queue.put(task)
 
-    async def train_step(self):
+    def train_step(self):
         if self.task_queue.empty():
             print("No tasks in the queue.")
             return
 
-        start_time = time.time()
         task = self.task_queue.get()
         task.model.train()
 
@@ -230,15 +254,21 @@ class PeftManager:
             epoch_iterator = iter(task.data_loader)
             inputs = next(epoch_iterator)
             inputs = task._prepare_inputs(inputs)
-            forward_start_time = time.time()
-            loss = task.compute_loss(inputs=inputs)
-            forward_end_time = time.time()
-            print(f"forward time:{forward_end_time - forward_start_time}")
+            loss = task.pipeline_compute_loss(inputs=inputs)
+            print(f"loss:{loss}")
+            # print(f"{inputs['input_ids'].size()}")
             backward_start_time = time.time()
             loss.backward()
+            # print(f"backward time1: {time.time() - backward_start_time}")
+            for i in range(len(task.model.base_model.model.base_model.forward_states) - 1, -1, -1):
+                grad_outputs = task.model.base_model.model.base_model.forward_states[i].grad
+                task.model.base_model.model.base_model.end_states[i].backward(grad_outputs)
+
+            # print(f"{task.model.base_model}")
+
             backward_end_time = time.time()
-            print(f"backward time:{backward_end_time - backward_start_time}")
-            print(f"{loss}")
+            print(f"backward time: {backward_end_time - backward_start_time}")
+            # print(f"{loss}")
             task.optimizer.step()
             task.lr_scheduler.step()
             task.optimizer.zero_grad()
@@ -248,8 +278,6 @@ class PeftManager:
             self.release_resources(task)
         # except Exception as e:
         #     print(f"Error during training step: {e}")
-        end_time = time.time()
-        print(f"peft time:{end_time - start_time}")
 
     def release_resources(self, task: PeftTask):
         del task.model
