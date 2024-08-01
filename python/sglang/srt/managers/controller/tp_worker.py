@@ -211,7 +211,7 @@ class ModelTpServer:
             # Run decode batch
             if self.running_batch is not None:
                 # Run a few decode batches continuously for reducing overhead
-                for _ in range(10):
+                for _ in range(1):
                     self.num_generated_tokens += len(self.running_batch.reqs)
                     decode_start_time = time.time()
                     self.forward_decode_batch(self.running_batch)

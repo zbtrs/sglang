@@ -293,12 +293,16 @@ class PeftManager:
         task.model.train()
 
         try:
+
+            # before_compute_time = time.time()
             if task.is_backward is False and task.layer_num == 0:
                 inputs = next(task.epoch_iterator)
                 inputs = task._prepare_inputs(inputs)
                 result = task.pipeline_compute(inputs=inputs)
             else:
                 result = task.pipeline_compute(inputs=None)
+            # after_compute_time = time.time()
+            # print(f"compute time: {after_compute_time - before_compute_time}")
             # loss = task.pipeline_compute_loss(inputs=inputs)
             # print(f"loss:{loss}")
             # print(f"{inputs['input_ids'].size()}")

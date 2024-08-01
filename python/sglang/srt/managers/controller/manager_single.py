@@ -48,24 +48,47 @@ class ControllerSingle:
         self.peft_manager.add_task(peft_task)
         # Init some configs
         self.request_dependency_delay = global_config.request_dependency_delay
-        self.peft_delay = global_config.peft_delay
+        self.peft_delay = 0.05
+        self.time_remaining = self.peft_delay
+        self.is_peft = False
 
     async def loop_for_forward(self):
         while True:
-            next_step_input = list(self.recv_reqs)
-            self.recv_reqs = []
             # print(f"next_step_input: {next_step_input}")
-
-            if next_step_input:
+            if self.is_peft is False:
+                next_step_input = list(self.recv_reqs)
+                self.recv_reqs = []
+                self.time_remaining = self.peft_delay
+                self.is_peft = True
                 await self.process_step(next_step_input)
-            elif self.peft_manager.has_tasks():
-                await self.peft_manager.train_step()
-                await asyncio.sleep(self.peft_delay)
             else:
-                await self.process_step(next_step_input)
+                while self.time_remaining > 0:
+                    if self.peft_manager.has_tasks():
+                        start_step_time = time.time()
+                        await self.peft_manager.train_step()
+                        elapsed_step_time = time.time() - start_step_time
+                        self.time_remaining -= elapsed_step_time
+                    else:
+                        self.is_peft = False
+                        break
+
+            if self.time_remaining <= 0:
+                self.is_peft = False
+                await asyncio.sleep(0)
+
+            # if next_step_input:
+            #     await self.process_step(next_step_input)
+            # elif self.peft_manager.has_tasks():
+            #     await self.peft_manager.train_step()
+            #     await asyncio.sleep(0)
+            # else:
+            #     await self.process_step(next_step_input)
 
     async def process_step(self, next_step_input):
+        inference_start_time = time.time()
         out_pyobjs = await self.model_client.step(next_step_input)
+        inference_end_time = time.time()
+        self.time_remaining -= (inference_end_time - inference_start_time)
 
         for obj in out_pyobjs:
             self.send_to_detokenizer.send_pyobj(obj)
